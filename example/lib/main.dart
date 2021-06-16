@@ -174,8 +174,13 @@ class _CastSampleState extends State<CastSample> {
   Future<void> _onSessionStarted() async {
     setState(() => _state = AppState.connected);
     await _controller.loadMedia(
-      'http://demo.unified-streaming.com/video/tears-of-steel/tears-of-steel.ism/.m3u8',
-    );
+        'http://demo.unified-streaming.com/video/tears-of-steel/tears-of-steel.ism/.m3u8',
+        {
+          "title": "Tomorrowland",
+          "artist": "Edd Fisher",
+          "image-url":
+              "https://www.pbsfm.org.au/sites/default/files/styles/program_thumbnail/public/program/tomorrowland.jpg"
+        });
   }
 
   Future<void> _onSessionEnded() async {
