@@ -25,22 +25,23 @@ class ChromeCastController(
         context: Context?
 ) : PlatformView, MethodChannel.MethodCallHandler, SessionManagerListener<Session>, PendingResult.StatusListener {
     private val channel = MethodChannel(messenger, "flutter_video_cast/chromeCast_$viewId")
-    private val chromeCastButton = MediaRouteButton(ContextThemeWrapper(context, R.style.Theme_AppCompat_NoActionBar))
+    private val chromeCastButton = MediaRouteButton(ContextThemeWrapper(context, android.R.style.Theme_DeviceDefault))
     private val sessionManager = CastContext.getSharedInstance()?.sessionManager
 
     init {
-        CastButtonFactory.setUpMediaRouteButton(context, chromeCastButton)
+        val nonNullContext = context ?: throw IllegalArgumentException("Context cannot be null")
+        CastButtonFactory.setUpMediaRouteButton(nonNullContext, chromeCastButton)
         channel.setMethodCallHandler(this)
     }
 
     private fun loadMedia(args: Any?) {
         if (args is Map<*, *>) {
-            val url = args["url"] as? String
+            val url = args["url"] as? String ?: return
 
             val meta = MediaMetadata(MediaMetadata.MEDIA_TYPE_GENERIC)
-            meta.putString(MediaMetadata.KEY_TITLE, args["title"] as? String)
-            meta.putString(MediaMetadata.KEY_ARTIST, args["artist"] as? String)
-            (args["image-url"] as? String).let{imageUrl ->
+            args["title"]?.let { meta.putString(MediaMetadata.KEY_TITLE, it as String) }
+            args["artist"]?.let { meta.putString(MediaMetadata.KEY_ARTIST, it as String) }
+            (args["image-url"] as? String)?.let { imageUrl ->
                 meta.addImage(WebImage(Uri.parse(imageUrl)))
             }
 
@@ -164,45 +165,45 @@ class ChromeCastController(
 
     // SessionManagerListener
 
-    override fun onSessionStarted(p0: Session?, p1: String?) {
+    override fun onSessionStarted(p0: Session, p1: String) {
         channel.invokeMethod("chromeCast#didStartSession", null)
     }
 
-    override fun onSessionEnded(p0: Session?, p1: Int) {
+    override fun onSessionEnded(p0: Session, p1: Int) {
         channel.invokeMethod("chromeCast#didEndSession", null)
     }
 
-    override fun onSessionResuming(p0: Session?, p1: String?) {
+    override fun onSessionResuming(p0: Session, p1: String) {
 
     }
 
-    override fun onSessionResumed(p0: Session?, p1: Boolean) {
+    override fun onSessionResumed(p0: Session, p1: Boolean) {
 
     }
 
-    override fun onSessionResumeFailed(p0: Session?, p1: Int) {
+    override fun onSessionResumeFailed(p0: Session, p1: Int) {
 
     }
 
-    override fun onSessionSuspended(p0: Session?, p1: Int) {
+    override fun onSessionSuspended(p0: Session, p1: Int) {
 
     }
 
-    override fun onSessionStarting(p0: Session?) {
+    override fun onSessionStarting(p0: Session) {
 
     }
 
-    override fun onSessionEnding(p0: Session?) {
+    override fun onSessionEnding(p0: Session) {
 
     }
 
-    override fun onSessionStartFailed(p0: Session?, p1: Int) {
+    override fun onSessionStartFailed(p0: Session, p1: Int) {
 
     }
 
     // PendingResult.StatusListener
 
-    override fun onComplete(status: Status?) {
+    override fun onComplete(status: Status) {
         if (status?.isSuccess == true) {
             channel.invokeMethod("chromeCast#requestDidComplete", null)
         }
