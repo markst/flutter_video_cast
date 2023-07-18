@@ -57,7 +57,7 @@ class ChromeCastButton extends StatelessWidget {
       'red': color.red,
       'green': color.green,
       'blue': color.blue,
-      'alpha': color.alpha
+      'alpha': 1.0
     };
     return SizedBox(
       width: size,
