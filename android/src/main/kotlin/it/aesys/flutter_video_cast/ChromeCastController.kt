@@ -29,8 +29,7 @@ class ChromeCastController(
     private val sessionManager = CastContext.getSharedInstance()?.sessionManager
 
     init {
-        val nonNullContext = context ?: throw IllegalArgumentException("Context cannot be null")
-        CastButtonFactory.setUpMediaRouteButton(nonNullContext, chromeCastButton)
+        CastButtonFactory.setUpMediaRouteButton(context, chromeCastButton)
         channel.setMethodCallHandler(this)
     }
 
@@ -165,45 +164,45 @@ class ChromeCastController(
 
     // SessionManagerListener
 
-    override fun onSessionStarted(p0: Session, p1: String) {
+    override fun onSessionStarted(p0: Session?, p1: String?) {
         channel.invokeMethod("chromeCast#didStartSession", null)
     }
 
-    override fun onSessionEnded(p0: Session, p1: Int) {
+    override fun onSessionEnded(p0: Session?, p1: Int) {
         channel.invokeMethod("chromeCast#didEndSession", null)
     }
 
-    override fun onSessionResuming(p0: Session, p1: String) {
+    override fun onSessionResuming(p0: Session?, p1: String?) {
 
     }
 
-    override fun onSessionResumed(p0: Session, p1: Boolean) {
+    override fun onSessionResumed(p0: Session?, p1: Boolean) {
 
     }
 
-    override fun onSessionResumeFailed(p0: Session, p1: Int) {
+    override fun onSessionResumeFailed(p0: Session?, p1: Int) {
 
     }
 
-    override fun onSessionSuspended(p0: Session, p1: Int) {
+    override fun onSessionSuspended(p0: Session?, p1: Int) {
 
     }
 
-    override fun onSessionStarting(p0: Session) {
+    override fun onSessionStarting(p0: Session?) {
 
     }
 
-    override fun onSessionEnding(p0: Session) {
+    override fun onSessionEnding(p0: Session?) {
 
     }
 
-    override fun onSessionStartFailed(p0: Session, p1: Int) {
+    override fun onSessionStartFailed(p0: Session?, p1: Int) {
 
     }
 
     // PendingResult.StatusListener
 
-    override fun onComplete(status: Status) {
+    override fun onComplete(status: Status?) {
         if (status?.isSuccess == true) {
             channel.invokeMethod("chromeCast#requestDidComplete", null)
         }
